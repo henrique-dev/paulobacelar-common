@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+script_root_dir="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+PROJECT_DIR="$(dirname $script_root_dir)"
+
+source "$script_root_dir/utils/docker.sh"
+
+$docker_command -f "$PROJECT_DIR/docker-compose.yml" --project-directory $PROJECT_DIR down
+$docker_command -f "$PROJECT_DIR/docker-compose.yml" --project-directory $PROJECT_DIR up -d
+
+wait_for_container postgresdb
+wait_for_container mongodb
+wait_for_container redis
+wait_for_container kong
+wait_for_container rabbitmq
